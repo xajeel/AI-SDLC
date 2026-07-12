@@ -10,7 +10,7 @@ Verifies a feature against its own spec. Mechanical by design: the spec already 
 
 ## Procedure
 
-**1. Load** `.sdlc/PROJECT.md` + the spec. Spec name unclear → list `.sdlc/specs/` and ask.
+**1. Load** `.sdlc/PROJECT.md` + `.sdlc/CRAFT.md` + the spec. Spec name unclear → list `.sdlc/specs/` and ask.
 
 **2. Task verifies.** Re-run the Verify command of every `[x]` task. Record pass/fail per task.
 
@@ -20,12 +20,14 @@ Verifies a feature against its own spec. Mechanical by design: the spec already 
 
 **5. Coverage gap.** Any acceptance check not covered by a test in the suite → write ONE minimal test for it (following the project's test pattern), run it, keep it.
 
-**6. Diff scan.** `git diff --name-only` (plus `git status --short` for untracked). Exactly two checks:
+**6. Diff scan.** `git diff --name-only` (plus `git status --short` for untracked). Exactly four checks:
 - Every changed file appears in some task's `Files:` list — unlisted changes get flagged.
-- Each changed file respects PROJECT.md Conventions and Boundaries — walk the bullets mechanically.
+- Each changed file respects CRAFT.md Structure (right directory, one concern per file), Style bullets, and Boundaries — walk them mechanically.
+- Scan changed source for hardcoded config/secrets — literal keys, passwords, tokens, connection URLs, ports that CRAFT.md says belong in the settings module + `.env.example`.
+- Scan changed source for legacy-version APIs forbidden by CRAFT.md's Stack idiom lines (e.g. SQLAlchemy 1.x style under a 2.x pin).
 
 **7. Verdict.**
-- **PASS** — all task verifies, acceptance checks, and the suite are green; no unlisted changes. Convention nits alone don't block — list them as notes.
+- **PASS** — all task verifies, acceptance checks, and the suite are green; no unlisted changes; no hardcoded secrets, structure, security, or idiom violations. Style nits alone don't block — list them as notes.
 - **FAIL** — anything else. For each failure, append a fix-task to the spec's Tasks section — `### [ ] F1 — fix: <what>` with Files / Do / Verify filled in — so `/build <feature>` can execute the fixes directly.
 
 **8. Append to the spec's QA log** (≤ 20 lines per run):
@@ -33,7 +35,7 @@ Verifies a feature against its own spec. Mechanical by design: the spec already 
 ```markdown
 ### QA <date> — PASS | FAIL
 Task verifies: 6/6 · Acceptance: 3/3 · Suite: 42 passed, 0 failed · Regressions: 0
-Unlisted changes: none
+Unlisted changes: none · Craft scan: clean
 Failures: <one line per F-task, or "none">
 Notes: <convention nits, or "none">
 Try it:
