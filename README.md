@@ -76,6 +76,7 @@ The `/build → /qa → /build` loop is self-healing: QA never edits code, it ap
 
 ## Changelog
 
+- [x] `0.1.3` — added a Getting started section: how to actually invoke the skills for a new project, an existing codebase, or a single feature
 - [x] `0.1.2` — automated PyPI releases via GitHub Actions trusted publishing
 - [x] `0.1.1` — cleaner README, professional package presentation
 - [x] `0.1.0` — initial release: 6 core skills + architecture-diagram, pip-installable CLI
