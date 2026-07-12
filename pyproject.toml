@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "ai-sdlc-kit"
+version = "0.1.1"
+description = "Spec-driven SDLC skills for AI coding agents — Claude Code, Cursor, Windsurf, Gemini CLI"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "xajeel" }]
+keywords = ["ai", "agents", "sdlc", "claude-code", "cursor", "skills", "spec-driven"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development",
+]
+
+[project.scripts]
+ai-sdlc = "ai_sdlc.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/xajeel/AI-SDLC"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ai_sdlc"]
+
+# This line is what bundles the repo-root skills/ folder into the wheel:
+[tool.hatch.build.targets.wheel.force-include]
+"skills" = "ai_sdlc/skills"
+
+[tool.hatch.build.targets.sdist]
+include = ["src", "skills", "README.md", "LICENSE", "pyproject.toml"]
