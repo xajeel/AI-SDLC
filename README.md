@@ -57,6 +57,7 @@ ai-sdlc --version    # print the installed version
 
 ## Changelog
 
+- [x] `0.1.2` — automated PyPI releases via GitHub Actions trusted publishing
 - [x] `0.1.1` — cleaner README, professional package presentation
 - [x] `0.1.0` — initial release: 6 core skills + architecture-diagram, pip-installable CLI
 
