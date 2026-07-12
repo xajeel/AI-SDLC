@@ -55,8 +55,28 @@ ai-sdlc list         # see bundled skills
 ai-sdlc --version    # print the installed version
 ```
 
+## Getting started
+
+Every project starts with `/sdlc-init` — run it once, in your agent, inside your project folder. It writes `.sdlc/PROJECT.md` (stack, layout, conventions) and `.sdlc/STATE.md` (feature tracker) that every other skill reads. It works two ways:
+
+- **New project** — `/sdlc-init <path-to-your-PRD-or-description>`. It reads the doc and asks a few multiple-choice questions to fill any gaps (framework, DB, test runner, etc.).
+- **Existing codebase** — `/sdlc-init` with no argument. It detects your stack from manifests/config and a handful of source files instead of asking you to describe it.
+
+From there, pick the path that matches what you're doing:
+
+| Situation | Commands |
+|---|---|
+| Building a whole project from a PRD | `/sdlc-init <PRD>` → `/roadmap <PRD>` → then `/spec <feature>` → `/build <feature>` → `/qa <feature>` → `/ship <feature>` for each feature in order |
+| Adding one feature to an existing codebase | `/sdlc-init` (skip if already run) → `/spec <feature description>` → `/build <feature>` → `/qa <feature>` → `/ship <feature>` |
+| Something else — bugfix, refactor, exploration | Skills are for planned feature work; for anything smaller just talk to your agent directly |
+
+`/roadmap` only makes sense for a whole project — it turns a PRD into an ordered feature list. For a single feature, skip straight to `/spec`.
+
+The `/build → /qa → /build` loop is self-healing: QA never edits code, it appends fix-tasks to the spec, and `/build` executes them like any other task. `/ship` commits once QA passes — it never pushes.
+
 ## Changelog
 
+- [x] `0.1.3` — added a Getting started section: how to actually invoke the skills for a new project, an existing codebase, or a single feature
 - [x] `0.1.2` — automated PyPI releases via GitHub Actions trusted publishing
 - [x] `0.1.1` — cleaner README, professional package presentation
 - [x] `0.1.0` — initial release: 6 core skills + architecture-diagram, pip-installable CLI
