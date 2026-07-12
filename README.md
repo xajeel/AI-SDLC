@@ -20,7 +20,7 @@
 
 | Skill | Does |
 |---|---|
-| `sdlc-init` | One-time project setup: stack, layout, commands, conventions |
+| `sdlc-init` | One-time setup: project facts + the code-craft rulebook (`.sdlc/CRAFT.md`) |
 | `roadmap` | Splits a PRD into ordered, shippable features |
 | `spec` | Plans one feature: decisions, tasks with contracts + verify commands |
 | `build` | Executes the spec task-by-task, verifying after every step |
@@ -57,10 +57,12 @@ ai-sdlc --version    # print the installed version
 
 ## Getting started
 
-Every project starts with `/sdlc-init` — run it once, in your agent, inside your project folder. It writes `.sdlc/PROJECT.md` (stack, layout, conventions) and `.sdlc/STATE.md` (feature tracker) that every other skill reads. It works two ways:
+Every project starts with `/sdlc-init` — run it once, in your agent, inside your project folder. It writes `.sdlc/PROJECT.md` (project facts + commands), `.sdlc/CRAFT.md` (the code rulebook: pinned stack versions with modern-idiom rules, folder structure, coding style, config & security rules — every build follows it), and `.sdlc/STATE.md` (feature tracker). It works two ways:
 
 - **New project** — `/sdlc-init <path-to-your-PRD-or-description>`. It reads the doc and asks a few multiple-choice questions to fill any gaps (framework, DB, test runner, etc.).
-- **Existing codebase** — `/sdlc-init` with no argument. It detects your stack from manifests/config and a handful of source files instead of asking you to describe it.
+- **Existing codebase** — `/sdlc-init` with no argument. It detects your stack and rules from lockfiles, manifests, and a handful of source files instead of asking you to describe it.
+
+Either way you choose how the rules are set — provide your own, answer questions, or let the agent propose best practices — and it always shows you the stack and rules for approval before writing anything.
 
 From there, pick the path that matches what you're doing:
 
@@ -76,6 +78,7 @@ The `/build → /qa → /build` loop is self-healing: QA never edits code, it ap
 
 ## Changelog
 
+- [x] `0.1.4` — code-craft rulebook: `.sdlc/CRAFT.md` pins stack versions + modern idioms, enforces folder structure (one concern per file), env-based config with `.env.example`, and a security baseline across `/spec`, `/build`, `/qa`
 - [x] `0.1.3` — added a Getting started section: how to actually invoke the skills for a new project, an existing codebase, or a single feature
 - [x] `0.1.2` — automated PyPI releases via GitHub Actions trusted publishing
 - [x] `0.1.1` — cleaner README, professional package presentation

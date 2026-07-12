@@ -12,6 +12,7 @@ Produces ONE file containing everything about a feature — what, why, and how �
 
 **1. Load context — these files and nothing else:**
 - `.sdlc/PROJECT.md` — missing → run the sdlc-init skill first, then return here.
+- `.sdlc/CRAFT.md` — the code rulebook (pinned stack + idioms, structure, style, config, security). Missing → run sdlc-init first. Every task you write must be implementable without breaking it.
 - `.sdlc/STATE.md` — what already shipped; never re-plan existing work.
 - `.sdlc/ROADMAP.md` — only if the user referenced a roadmap feature; pull its goal, scope, done-when.
 
@@ -19,6 +20,7 @@ Produces ONE file containing everything about a feature — what, why, and how �
 
 **3. Research the unknowns (no code yet).** List the components the feature needs (e.g. "JWT refresh flow", "webhook signature verification", "cursor pagination"). For each one not already solved in this codebase:
 - Find the standard production approach — official docs / web search if tools are available, otherwise known best practice.
+- Research against the versions CRAFT.md pins — the pinned major's API, not whatever version is most common in old tutorials.
 - Write a **Decision** in the template's format, ≤ 5 lines, in plain English:
   1. what the component IS — one simple line, assume the reader has never heard of it
   2. what we chose
@@ -44,6 +46,9 @@ Produces ONE file containing everything about a feature — what, why, and how �
   - `Verify:` one runnable command + expected outcome
 - Code appears ONLY as: function/route signatures, request/response/schema shapes, and ≤ 5-line pseudocode for genuinely tricky logic. NEVER full file bodies.
 - Every Do bullet must be decidable without judgment: "hash with bcrypt, cost 12" — not "hash securely".
+- `Files:` must follow CRAFT.md Structure — one concern per file. `CREATE src/auth.py` holding models + schemas + routes is an invalid task: split into `models/user.py`, `schemas/auth.py`, `routers/auth.py`, … per the Structure section.
+- A task that introduces a config value (secret key, DB URL, token TTL, port) gets a Do bullet: read it via the settings module and add the key to `.env.example`. Never plan a hardcoded value.
+- A task that adds a dependency names the exact package + version, consistent with CRAFT.md's pins.
 - If tests aren't built into each task, the last task is the feature's tests.
 
 **7. Report in ≤ 6 lines:** spec path, task count, key decisions (1 line each), then: "Review Decisions and Tasks — edit anything — then run `/build <feature>`."
@@ -97,9 +102,11 @@ Verify: `<command>` → <expected>
 ```
 
 ## Quality bar — check before saving
-- [ ] A model with ONLY this spec + PROJECT.md could implement every task
+- [ ] A model with ONLY this spec + PROJECT.md + CRAFT.md could implement every task
 - [ ] Every task has a runnable Verify; every "Done when" maps to an Acceptance check
 - [ ] No full code bodies; no vague bullets ("handle errors properly")
+- [ ] Every `Files:` list lands each concern in its CRAFT.md directory — no multi-concern files
+- [ ] No config value is hardcoded anywhere in the plan — settings module + `.env.example` only
 - [ ] Touches lists every existing file that will change
 - [ ] **What & why** + **Decisions** pass the 12th-grader test: a reader with no coding
       background can say what is being built, how it will work, and why each choice

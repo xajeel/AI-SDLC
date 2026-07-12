@@ -25,7 +25,7 @@ Commit-only. Reads the spec for the message, guards the branch, stages files by 
 **4. Stage.** `git status --short`. Stage by name — never `git add .` or `-A`:
 - every file from the spec's task `Files:` lists
 - the spec itself, STATE.md, ROADMAP.md if touched
-- never `.env*`, secrets, build artifacts, dependency dirs
+- never `.env` or any secret-bearing file, build artifacts, dependency dirs — `.env.example` (placeholders only) is fine and expected
 - changed files NOT in the spec → list them, ask include / exclude
 
 **5. Build the message** (Conventional Commits):
