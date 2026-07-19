@@ -1,0 +1,34 @@
+{
+  "name": "ai-sdlc-kit",
+  "version": "0.1.6",
+  "description": "Spec-driven SDLC skills for AI coding agents — Claude Code, Cursor, Windsurf, Gemini CLI",
+  "license": "MIT",
+  "author": "xajeel",
+  "homepage": "https://github.com/xajeel/AI-SDLC#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xajeel/AI-SDLC.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xajeel/AI-SDLC/issues"
+  },
+  "keywords": [
+    "ai",
+    "agents",
+    "sdlc",
+    "claude-code",
+    "cursor",
+    "skills",
+    "spec-driven"
+  ],
+  "bin": {
+    "ai-sdlc": "bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "skills"
+  ],
+  "engines": {
+    "node": ">=18"
+  }
+}
