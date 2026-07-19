@@ -10,7 +10,7 @@ Commit-only. Reads the spec for the message, guards the branch, stages files by 
 
 ## Procedure
 
-**1. Gate.** Read the spec. The latest QA log entry must be PASS. Not PASS, or no QA log → say so and offer `/qa <feature>`. Proceed anyway only on an explicit user override ("ship anyway") — note the override in the commit body.
+**1. Gate.** Read the spec. The latest QA log entry must be PASS. Not PASS, or no QA log → say so and offer `/qa <feature>`. Two exceptions, each noted in the commit body: qa is on PROJECT.md's `Skip stages:` line (`qa: skipped`), or an explicit user override ("ship anyway").
 
 **2. Branch guard** (per repo, if multi-repo). `git branch --show-current`. On main / master / develop / development / staging / integration / release/* or detached HEAD → refuse and offer:
 - A) create `feat/<feature>` and continue

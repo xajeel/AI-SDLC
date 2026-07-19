@@ -14,9 +14,14 @@ Produces ONE file containing everything about a feature — what, why, and how �
 - `.sdlc/PROJECT.md` — missing → run the sdlc-init skill first, then return here.
 - `.sdlc/CRAFT.md` — the code rulebook (pinned stack + idioms, structure, style, config, security). Missing → run sdlc-init first. Every task you write must be implementable without breaking it.
 - `.sdlc/STATE.md` — what already shipped; never re-plan existing work.
+- `.sdlc/BUGS.md` — if it exists: plain-English bugs from past QA runs. No task may reintroduce one; where a recorded bug touches this feature's area, add a Do bullet or Verify that guards against it.
 - `.sdlc/ROADMAP.md` — only if the user referenced a roadmap feature; pull its goal, scope, done-when.
 
-**2. Understand.** Restate the feature in ≤ 2 sentences: what the user gets, what changes in the system. This becomes `Goal`. Then draft the **What & why** section — 3–6 plain-English sentences describing what this feature is and how it will work once built (the journey from the user's action to the result). No jargon: a smart 12th-grader with zero coding background must be able to follow it.
+**2. Understand — build the mental model.** Restate the feature in ≤ 2 sentences: what the user gets, what changes in the system. This becomes `Goal`. Then draft the **Mental model** section — three labelled parts, plain English:
+- **What we are building** — 2–3 sentences: the thing itself, concretely.
+- **Why** — 1–2 sentences: the problem it solves; what stays broken without it.
+- **How it will work** — 3–5 sentences tracing the journey from the user's action to the result, naming each moving part and where it lives. Add a ≤ 8-line ASCII flow when the path has 3+ hops.
+The test: after reading it the developer can explain the feature to anyone — what will exist, why, and how the pieces connect — before any code is written. Define technical terms in brackets at first use.
 
 **3. Research the unknowns (no code yet).** List the components the feature needs (e.g. "JWT refresh flow", "webhook signature verification", "cursor pagination"). For each one not already solved in this codebase:
 - Find the standard production approach — official docs / web search if tools are available, otherwise known best practice.
@@ -27,7 +32,7 @@ Produces ONE file containing everything about a feature — what, why, and how �
   3. why, in everyday words
   4. what we rejected and why not
 - Define every technical term in brackets at first use — e.g. "JWT (a signed pass the server can verify without a database lookup)".
-- Audience rule: **What & why** and **Decisions** are written for the developer and anyone they must explain the feature to — a boss, a client, a teammate — NOT for the model. If a sentence needs a CS degree, rewrite it.
+- Audience rule: **Mental model** and **Decisions** are written for the developer and anyone they must explain the feature to — a boss, a client, a teammate — NOT for the model. If a sentence needs a CS degree, rewrite it.
 
 **4. Integration scan.** Read ONLY the existing files this feature touches or extends. Record in `Touches`:
 - files to be edited, and what changes in each
@@ -51,7 +56,11 @@ Produces ONE file containing everything about a feature — what, why, and how �
 - A task that adds a dependency names the exact package + version, consistent with CRAFT.md's pins.
 - If tests aren't built into each task, the last task is the feature's tests.
 
-**7. Report in ≤ 6 lines:** spec path, task count, key decisions (1 line each), then: "Review Decisions and Tasks — edit anything — then run `/build <feature>`."
+**7. Present the plan in chat — never just the file path.** Show, in this order:
+- the **Mental model** section, verbatim
+- each Decision as one line: `**<Component>** — chose <X> because <Y>`
+- the task list, one line per task: `T1 — <name>`
+Then: "Review the spec — edit anything — then run `/build <feature>`." The reader must come away knowing what is being built, why, and how it will work — without opening the file.
 
 ## Spec template
 
@@ -63,10 +72,11 @@ Done when:
 - <verifiable criterion>
 - <verifiable criterion>
 
-## What & why — plain English
-<3–6 sentences anyone can understand: what this feature is, how it works once
-built — the flow from the user's action to the result — and where it fits in
-the app. Optional: a ≤ 8-line ASCII flow of that journey.>
+## Mental model — read this first
+**What we are building:** <2–3 sentences — the thing itself, concretely>
+**Why:** <1–2 sentences — the problem this solves; what stays broken without it>
+**How it will work:** <3–5 sentences — the journey from the user's action to the
+result, naming each moving part and where it lives. Optional ≤ 8-line ASCII flow.>
 
 ## Decisions
 <!-- One block per choice · ≤ 5 lines each · plain English · define jargon in
@@ -108,6 +118,7 @@ Verify: `<command>` → <expected>
 - [ ] Every `Files:` list lands each concern in its CRAFT.md directory — no multi-concern files
 - [ ] No config value is hardcoded anywhere in the plan — settings module + `.env.example` only
 - [ ] Touches lists every existing file that will change
-- [ ] **What & why** + **Decisions** pass the 12th-grader test: a reader with no coding
-      background can say what is being built, how it will work, and why each choice
-      was made — every technical term is defined at first use
+- [ ] No task reintroduces a bug recorded in `.sdlc/BUGS.md`
+- [ ] **Mental model** + **Decisions** pass the explain-it-to-anyone test: a reader with no
+      coding background can say what is being built, why, and how it will work —
+      every technical term is defined at first use

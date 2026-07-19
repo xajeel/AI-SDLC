@@ -26,6 +26,7 @@
 | `build` | Executes the spec task-by-task, verifying after every step |
 | `qa` | Re-runs verifies + acceptance checks; failures become fix-tasks |
 | `ship` | Branch guard, staged commit built from the spec — never pushes |
+| `automate` | Hands-free spec → build → qa for one feature; decisions auto-picked and logged |
 | `architecture-diagram` | Renders a self-contained HTML/SVG architecture diagram |
 
 ## Install
@@ -41,7 +42,7 @@ pip install ai-sdlc-kit
 ai-sdlc install --agent claude   # or cursor / windsurf / gemini / all
 ```
 
-This copies the skills into your agent's skills directory. They then appear as slash commands: `/sdlc-init`, `/roadmap`, `/spec`, `/build`, `/qa`, `/ship`.
+This copies the skills into your agent's skills directory. They then appear as slash commands: `/sdlc-init`, `/roadmap`, `/spec`, `/build`, `/qa`, `/ship`, `/automate`.
 
 | Flag | Effect |
 |---|---|
@@ -54,6 +55,8 @@ This copies the skills into your agent's skills directory. They then appear as s
 ai-sdlc list         # see bundled skills
 ai-sdlc --version    # print the installed version
 ```
+
+> **Monorepo, or no Python project at the root?** Not a problem — `ai-sdlc install` only copies skill files into `.claude/skills/` (or your agent's folder); it never reads `pyproject.toml` or anything else at the target. Install the CLI once with `pipx install ai-sdlc-kit` or `uv tool install ai-sdlc-kit` so it works from any directory, then run it at your repo root — or run it from anywhere with `--target /path/to/root`.
 
 ## Getting started
 
@@ -76,8 +79,15 @@ From there, pick the path that matches what you're doing:
 
 The `/build → /qa → /build` loop is self-healing: QA never edits code, it appends fix-tasks to the spec, and `/build` executes them like any other task. `/ship` commits once QA passes — it never pushes.
 
+Three workflow controls on top of that:
+
+- **Skip a stage** — `/sdlc-init --skip-ship` (or `--skip-qa`) drops a stage from the flow; toggle any time mid-project with `--unskip-<stage>`. Handoffs and `/automate` bypass skipped stages; invoking one directly still runs it.
+- **Hands-free mode** — `/automate <feature>` runs spec → build → qa back-to-back with zero questions: every design choice takes the recommended production-standard option and is recorded in the spec marked `(auto)`, so you can audit each one afterwards. It stops only for real blockers (a verify failing after 3 attempts, an unfixable regression). Add `--ship` to include the commit stage.
+- **Bug memory** — `/qa` keeps `.sdlc/BUGS.md`, a plain-English log anyone can read: what went wrong, why it happened, how to avoid it. `/spec` and `/build` read it on every run so the same bug never ships twice.
+
 ## Changelog
 
+- [x] `0.1.5` — `/automate` hands-free flow, stage skipping (`--skip-qa` / `--skip-ship`), plain-English bug log (`.sdlc/BUGS.md`) that feeds future specs, and specs now open with a mental-model section (what / why / how) presented in chat
 - [x] `0.1.4` — code-craft rulebook: `.sdlc/CRAFT.md` pins stack versions + modern idioms, enforces folder structure (one concern per file), env-based config with `.env.example`, and a security baseline across `/spec`, `/build`, `/qa`
 - [x] `0.1.3` — added a Getting started section: how to actually invoke the skills for a new project, an existing codebase, or a single feature
 - [x] `0.1.2` — automated PyPI releases via GitHub Actions trusted publishing

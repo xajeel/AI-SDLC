@@ -44,7 +44,7 @@ Done when: <2–3 verifiable criteria — "returns 401 unauthenticated", not "wo
 - <anything deliberately dropped, one line each>
 ```
 
-**6. Report in ≤ 6 lines:** feature count, phase summary, and the next command: `/spec <feature-1>`.
+**6. Report in ≤ 6 lines:** feature count, phase summary, and the next command: `/spec <feature-1>` — or `/automate <feature-1>` to run its whole cycle hands-free.
 
 ## Rules
 - Cover the ENTIRE PRD scope — anything skipped goes under "Out of v1", never silently dropped.
