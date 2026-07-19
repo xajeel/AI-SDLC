@@ -1,7 +1,7 @@
 ---
 name: sdlc-init
 description: "Set up AI-SDLC for a project — creates .sdlc/PROJECT.md (what it is, commands), .sdlc/CRAFT.md (the code rulebook: pinned stack + idioms, folder structure, style, config & secrets, security), and .sdlc/STATE.md (feature log). Run once per project, before any other SDLC skill. USE WHEN: 'set up sdlc', 'init project context', or any SDLC skill finds no .sdlc/ folder."
-argument-hint: "Optionally: a PRD/description, a doc path, or 'analyze the codebase'"
+argument-hint: "Optionally: a PRD/description, a doc path, 'analyze the codebase', or --skip-<stage> / --unskip-<stage>"
 ---
 
 # sdlc-init
@@ -19,6 +19,8 @@ CRAFT.md is the code rulebook: it is what makes ten build sessions — or ten di
 | `.sdlc/STATE.md` | Feature status table + cross-feature notes | grows ~1 line per feature |
 
 ## Procedure
+
+**0. Stage toggle?** If the argument is only skip/unskip flags (`--skip-ship`, `--unskip-qa`, or plain words like "skip ship") AND `.sdlc/PROJECT.md` already exists, this is a toggle, not a re-init: update the `Skip stages:` line in PROJECT.md, confirm in one line, stop — nothing else runs. Only `qa` and `ship` can be skipped: `spec` and `build` are the irreducible core, and `/roadmap` is already optional — refuse anything else with one line. On a fresh init, the same flags simply pre-set the line. Skipped stages are bypassed by stage handoffs and by /automate; invoking a skipped skill directly still runs it.
 
 **1. Existing setup check.** If `.sdlc/PROJECT.md` or `.sdlc/CRAFT.md` exists and is non-empty: show a 3-line summary, ask — update, replace, or cancel. Wait for the answer.
 
@@ -52,7 +54,7 @@ Blank answer → the recommended option for the situation.
 - Commands must be real: run the test command once to confirm it works (skip on greenfield).
 - No placeholders left in the final files.
 
-**7. Report in ≤ 6 lines:** files created, pinned stack, and the next step — `/roadmap` for a whole project, `/spec <feature>` for one feature.
+**7. Report in ≤ 6 lines:** files created, pinned stack, skipped stages (if any), and the next step — `/roadmap` for a whole project, `/spec <feature>` for one feature, or `/automate <feature>` to run a feature's whole cycle hands-free.
 
 ## PROJECT.md template
 
@@ -70,6 +72,7 @@ Blank answer → the recommended option for the situation.
 - migrate: <exact command or "n/a">
 
 > Repos: <single | list each path + purpose if multi-repo>
+> Skip stages: none   <!-- qa, ship, or both — handoffs and /automate bypass these; toggle via /sdlc-init --skip-<stage> / --unskip-<stage> -->
 ```
 
 ## CRAFT.md template

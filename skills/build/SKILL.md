@@ -10,7 +10,7 @@ Executes `.sdlc/specs/<feature>.md`. The spec is the authority: `Files` lists ar
 
 ## Setup
 
-1. Read `.sdlc/PROJECT.md` (commands), `.sdlc/CRAFT.md` (the code rulebook: pinned stack + idiom rules, structure, style, config & secrets, security, boundaries), and the spec. Spec missing → tell the user to run /spec first. CRAFT.md missing → run sdlc-init first. Do not improvise a plan.
+1. Read `.sdlc/PROJECT.md` (commands), `.sdlc/CRAFT.md` (the code rulebook: pinned stack + idiom rules, structure, style, config & secrets, security, boundaries), and the spec. Spec missing → tell the user to run /spec first. CRAFT.md missing → run sdlc-init first. Do not improvise a plan. Also read `.sdlc/BUGS.md` if it exists — a plain-English log of past bugs; never reintroduce one that touches the files or patterns you're about to work on.
 2. If spec Status is `draft`, set it to `building`.
 3. `git branch --show-current` — on main/master/develop/staging/release/* → create and switch to `feat/<feature>` before touching anything.
 
@@ -36,7 +36,7 @@ Executes `.sdlc/specs/<feature>.md`. The spec is the authority: `Files` lists ar
 
 When every task is `[x]` and the final checkpoint is green:
 1. Set spec Status: `qa`.
-2. Report in ≤ 6 lines: tasks completed, files created/edited, suite result, then: "Run `/qa <feature>`."
+2. Report in ≤ 6 lines: tasks completed, files created/edited, suite result, then the next step: "Run `/qa <feature>`." — unless PROJECT.md's `Skip stages:` line lists qa, then point to `/ship <feature>`; if ship is skipped too, update the feature's STATE.md row to `done` and report the feature complete.
 
 ## Hard rules
 - Never mark a task `[x]` without its Verify passing. No exceptions, no "fix later".
