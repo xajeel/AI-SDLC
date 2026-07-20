@@ -7,6 +7,7 @@
 
 <p align="center">
   <a href="https://pypi.org/project/ai-sdlc-kit/"><img src="https://img.shields.io/pypi/v/ai-sdlc-kit.svg" alt="PyPI version"></a>
+  <a href="https://www.npmjs.com/package/ai-sdlc-kit"><img src="https://img.shields.io/npm/v/ai-sdlc-kit.svg" alt="npm version"></a>
   <a href="https://github.com/xajeel/AI-SDLC/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
 </p>
 
@@ -33,9 +34,14 @@
 ## Install
 
 ```bash
-pip install ai-sdlc-kit
-# or: uv tool install ai-sdlc-kit
+# Python
+pip install ai-sdlc-kit        # or: uv tool install ai-sdlc-kit
+
+# Node
+npm install -g ai-sdlc-kit     # or one-off: npx ai-sdlc-kit install --agent claude
 ```
+
+Both give you the same `ai-sdlc` command and the same skills — pick whichever ecosystem you already have.
 
 ## Use
 
