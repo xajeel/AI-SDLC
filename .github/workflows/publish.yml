@@ -1,4 +1,4 @@
-name: Publish to PyPI
+name: Publish to PyPI and npm
 
 on:
   release:
@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  publish:
+  publish-pypi:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -26,3 +26,40 @@ jobs:
 
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-npm:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      # npm's OIDC trusted publishing needs npm >= 11.5
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Smoke-test the CLI
+        run: |
+          node bin/cli.js list
+          node bin/cli.js install --agent claude --target /tmp/smoke
+          test -f /tmp/smoke/.claude/skills/spec/SKILL.md
+
+      - name: Skip if this version is already on npm
+        id: check
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if npm view "ai-sdlc-kit@$VERSION" version >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "ai-sdlc-kit@$VERSION already published — skipping"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm
+        if: steps.check.outputs.exists == 'false'
+        run: npm publish --access public
