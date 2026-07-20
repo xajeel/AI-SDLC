@@ -4,5 +4,5 @@ requires-python = ">=3.9"
 
 [[package]]
 name = "ai-sdlc-kit"
-version = "0.1.6"
+version = "0.1.8"
 source = { editable = "." }
