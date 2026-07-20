@@ -28,6 +28,7 @@
 | `ship` | Branch guard, staged commit built from the spec — never pushes |
 | `automate` | Hands-free spec → build → qa for one feature; decisions auto-picked and logged |
 | `architecture-diagram` | Renders a self-contained HTML/SVG architecture diagram |
+| `mentor` | Teaches you a topic — or a whole codebase — one tracked lesson at a time |
 
 ## Install
 
@@ -42,7 +43,7 @@ pip install ai-sdlc-kit
 ai-sdlc install --agent claude   # or cursor / windsurf / gemini / all
 ```
 
-This copies the skills into your agent's skills directory. They then appear as slash commands: `/sdlc-init`, `/roadmap`, `/spec`, `/build`, `/qa`, `/ship`, `/automate`.
+This copies the skills into your agent's skills directory. They then appear as slash commands: `/sdlc-init`, `/roadmap`, `/spec`, `/build`, `/qa`, `/ship`, `/automate`, `/mentor`.
 
 | Flag | Effect |
 |---|---|
@@ -74,6 +75,7 @@ From there, pick the path that matches what you're doing:
 | Building a whole project from a PRD | `/sdlc-init <PRD>` → `/roadmap <PRD>` → then `/spec <feature>` → `/build <feature>` → `/qa <feature>` → `/ship <feature>` for each feature in order |
 | Adding one feature to an existing codebase | `/sdlc-init` (skip if already run) → `/spec <feature description>` → `/build <feature>` → `/qa <feature>` → `/ship <feature>` |
 | Something else — bugfix, refactor, exploration | Skills are for planned feature work; for anything smaller just talk to your agent directly |
+| Learning a codebase or a technology | `/mentor` — see [Learning a codebase](#learning-a-codebase) below |
 
 `/roadmap` only makes sense for a whole project — it turns a PRD into an ordered feature list. For a single feature, skip straight to `/spec`.
 
@@ -85,8 +87,22 @@ Three workflow controls on top of that:
 - **Hands-free mode** — `/automate <feature>` runs spec → build → qa back-to-back with zero questions: every design choice takes the recommended production-standard option and is recorded in the spec marked `(auto)`, so you can audit each one afterwards. It stops only for real blockers (a verify failing after 3 attempts, an unfixable regression). Add `--ship` to include the commit stage.
 - **Bug memory** — `/qa` keeps `.sdlc/BUGS.md`, a plain-English log anyone can read: what went wrong, why it happened, how to avoid it. `/spec` and `/build` read it on every run so the same bug never ships twice.
 
+## Learning a codebase
+
+The other skills build software; `/mentor` teaches it. Point it at a topic ("teach me Kafka") or at the repo you're sitting in ("teach me this codebase") and it builds a curriculum, then teaches **one lesson per session** — never dumping the whole course at once — quizzing you at the end of each and only advancing once you pass.
+
+For a codebase it reads the repo first, then runs a short course of one or two modules:
+
+- **Map & Run** — what the project does, a guided tour of the directories, getting it running locally, and one core flow traced end-to-end through the real files.
+- **Work On It** — the subsystems that change most often (picked from `git log`), the repo's conventions, and how a change actually ships here: branch, tests, CI, PR.
+
+Every lesson cites real `file:line` locations and the exercises happen inside the repo — run it, trace it, write a failing test. The final project is a real change with tests passing, so you finish able to contribute rather than just able to describe the code.
+
+State lives in `curriculum/<topic>/` (tracker, lessons, quizzes, projects), so progress survives across days and machines. Say `next` to continue, `quiz me` for a cumulative check, or `status` to see where you are.
+
 ## Changelog
 
+- [x] `0.1.7` — new `/mentor` skill: a long-term, file-tracked teacher for any topic, with a codebase mode that onboards you to a repo well enough to contribute to it
 - [x] `0.1.5` — `/automate` hands-free flow, stage skipping (`--skip-qa` / `--skip-ship`), plain-English bug log (`.sdlc/BUGS.md`) that feeds future specs, and specs now open with a mental-model section (what / why / how) presented in chat
 - [x] `0.1.4` — code-craft rulebook: `.sdlc/CRAFT.md` pins stack versions + modern idioms, enforces folder structure (one concern per file), env-based config with `.env.example`, and a security baseline across `/spec`, `/build`, `/qa`
 - [x] `0.1.3` — added a Getting started section: how to actually invoke the skills for a new project, an existing codebase, or a single feature
