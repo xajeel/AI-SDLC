@@ -1,6 +1,6 @@
 {
   "name": "ai-sdlc-kit",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "Spec-driven SDLC skills for AI coding agents — Claude Code, Cursor, Windsurf, Gemini CLI",
   "license": "MIT",
   "author": "xajeel",

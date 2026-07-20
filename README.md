@@ -108,7 +108,9 @@ State lives in `curriculum/<topic>/` (tracker, lessons, quizzes, projects), so p
 
 ## Changelog
 
+- [x] `0.1.8` — PyPI and npm realigned on one version number, so `pip` and `npm` always ship the same kit
 - [x] `0.1.7` — new `/mentor` skill: a long-term, file-tracked teacher for any topic, with a codebase mode that onboards you to a repo well enough to contribute to it
+- [x] `0.1.6` — same kit on npm: `npm install -g ai-sdlc-kit` (zero-dependency Node CLI); releases now publish to PyPI and npm together
 - [x] `0.1.5` — `/automate` hands-free flow, stage skipping (`--skip-qa` / `--skip-ship`), plain-English bug log (`.sdlc/BUGS.md`) that feeds future specs, and specs now open with a mental-model section (what / why / how) presented in chat
 - [x] `0.1.4` — code-craft rulebook: `.sdlc/CRAFT.md` pins stack versions + modern idioms, enforces folder structure (one concern per file), env-based config with `.env.example`, and a security baseline across `/spec`, `/build`, `/qa`
 - [x] `0.1.3` — added a Getting started section: how to actually invoke the skills for a new project, an existing codebase, or a single feature
