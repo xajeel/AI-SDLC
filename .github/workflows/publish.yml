@@ -48,6 +48,10 @@ jobs:
           node bin/cli.js list
           node bin/cli.js install --agent claude --target /tmp/smoke
           test -f /tmp/smoke/.claude/skills/spec/SKILL.md
+          test -f /tmp/smoke/.mcp.json
+          if [ -d agents ]; then test -f /tmp/smoke/.claude/agents/sdlc-builder.md; fi
+          test -f /tmp/smoke/.claude/settings.json
+          test -f /tmp/smoke/.claude/hooks/ai-sdlc/guard_push.py
 
       - name: Skip if this version is already on npm
         id: check
