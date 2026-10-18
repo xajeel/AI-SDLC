@@ -35,4 +35,4 @@ packages = ["src/ai_sdlc"]
 "hooks" = "ai_sdlc/hooks"
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "skills", "agents", "hooks", "README.md", "LICENSE", "pyproject.toml"]
+include = ["src", "skills", "agents", "hooks", "README.md", "CHANGELOG.md", "LICENSE", "pyproject.toml"]

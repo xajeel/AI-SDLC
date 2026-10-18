@@ -28,7 +28,8 @@
     "bin",
     "skills",
     "agents",
-    "hooks"
+    "hooks",
+    "CHANGELOG.md"
   ],
   "engines": {
     "node": ">=18"
