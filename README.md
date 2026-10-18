@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">ai-sdlc-kit</h1>
-<p align="center">Spec-driven SDLC skills that make AI coding agents work like a real engineering team — and leave the developer understanding every change.</p>
+<p align="center">A spec-driven, test-first code factory for AI coding agents.</p>
 
 <p align="center">
   <a href="https://pypi.org/project/ai-sdlc-kit/"><img src="https://img.shields.io/pypi/v/ai-sdlc-kit.svg" alt="PyPI version"></a>
@@ -13,143 +13,93 @@
 
 ---
 
-## What is it?
-
-`ai-sdlc-kit` installs a set of skills for Claude Code, Cursor, Windsurf, and Gemini CLI that turn one coding agent into a small engineering team with separated roles:
-
-**diagnose & teach → spec in verifiable tasks → write the tests first → build to the tests → independent QA gate → ship**
-
-Two ideas drive the design:
-
-1. **The developer must understand everything.** `/plan` walks you through the problem in plain language — *"when the user does X, this function runs, it should return Y but returns Z, and here's the line that causes it"* — plus the solution options and why one wins. Every feature keeps a human-readable `walkthrough.md` next to its machine-readable `spec.md`. You finish able to trace the code and defend the decisions.
-2. **No agent grades its own homework.** Each stage runs as its own fresh agent: the tester writes tests from the spec before the code exists, the builder can't touch those tests, and QA never sees the builder's reasoning. The final diff is written to survive review by an outside frontier model.
-
-| Skill | Role | Does |
-|---|---|---|
-| `sdlc-init` | — | One-time setup: project facts, git workflow, agent tiers, the code-craft rulebook, rule stubs for every coding tool |
-| `roadmap` | Planner | Splits a PRD into ordered, shippable features |
-| `plan` | Planner (strong) | Diagnoses a ticket from the real code, teaches you the flow, proposes production-grade solutions with pros/cons — never writes code |
-| `spec` | Planner (strong) | Turns the agreed plan into machine-facing tasks with contracts + verify commands |
-| `test` | Tester (strong) | Writes the tests from the spec BEFORE implementation; for a bug, a failing reproduction test first |
-| `build` | Developer (mid) | Implements task-by-task until the tester's tests go green — it may never edit them |
-| `qa` | QA (strong) | Independent gate: verifies, regression-checks, scans the diff for PR-readiness |
-| `ship` | — | Branch guard, staged commit per your git workflow; `--pr` opens a self-explanatory pull request |
-| `automate` | Orchestrator | The whole pipeline hands-free — adopts any plan you already agreed on |
-| `architecture-diagram` | — | Renders a self-contained HTML/SVG architecture diagram |
-| `mentor` | — | Teaches you a topic — or a whole codebase — one tracked lesson at a time |
+`ai-sdlc-kit` gives your coding agent an engineering team's workflow. It plans with you, writes the tests before the code, builds to those tests, and has a **different model** try to break the result — for one ticket or a whole PRD. Works with Claude Code, Cursor, Windsurf, and Gemini CLI.
 
 ## Install
 
 ```bash
-# Python
-pip install ai-sdlc-kit        # or: uv tool install ai-sdlc-kit
+pip install ai-sdlc-kit          # or: uv tool install ai-sdlc-kit
+npm install -g ai-sdlc-kit       # or: npx ai-sdlc-kit install
 
-# Node
-npm install -g ai-sdlc-kit     # or one-off: npx ai-sdlc-kit install --agent claude
+ai-sdlc install --agent claude   # cursor | windsurf | gemini | all
 ```
 
-Both give you the same `ai-sdlc` command and the same skills — pick whichever ecosystem you already have.
+`install` adds the skills, five stage subagents, the [Bug Ledger](https://github.com/xajeel/bugledger-mcp) MCP config, and — for Claude Code — two guard hooks. Existing config files are merged, never overwritten.
 
-## Use
+## Quick start
+
+```text
+/sdlc-init              once per project: stack, code rules, git workflow, models
+/plan <ticket>          understand the problem and agree on a fix — no code yet
+/factory <feature>      spec → review → tests → build → QA, unattended after one review
+```
+
+## Commands
+
+| Command | What it does |
+|---|---|
+| `/sdlc-init` | Sets up `.sdlc/`: project facts, the code rulebook, git workflow, a model per role |
+| `/roadmap <PRD>` | Splits a PRD into ordered, shippable features |
+| `/plan <ticket>` | Traces the bug or feature through the real code and explains it — never writes code |
+| `/design new\|redesign\|change` | Designs UI before code; keeps `.sdlc/DESIGN.md` |
+| `/spec <feature>` | Turns the agreed plan into ≤ 8 tasks with contracts and verify commands |
+| `/test <feature>` | Reviews the spec, then writes a focused test suite before the code exists |
+| `/build <feature>` | Implements task by task until the tests pass — never edits them |
+| `/qa <feature>` | Gate, adversarial review, blast-radius check, and UI check, in parallel |
+| `/ship <feature> [--pr]` | Commits per your git workflow; `--pr` opens the pull request |
+| `/factory …` | Runs the whole pipeline for any scope (below) |
+| `/mentor` | Teaches you a topic or a codebase, one tracked lesson at a time |
+| `/architecture-diagram` | Renders an HTML/SVG architecture diagram |
+
+## The factory
+
+```text
+/factory <feature>          one feature or ticket
+/factory f1 f2 f3           several features
+/factory --roadmap          every open roadmap feature
+/factory <PRD path>         a whole project: roadmap first, then every feature
+   --auto                   no stops — a reviewer model replaces your review
+   --ship                   open one PR per feature (never merged for you)
+```
+
+It plans every feature, has the reviewer critique each plan, and stops **once** for your approval. Then it builds unattended: independent features run in parallel git worktrees, each passing feature merges into an integration branch, and a stuck feature is parked while the rest continue. Progress and resume commands live in `.sdlc/RUN.md`.
+
+## How it works
+
+- **Separate roles.** Every stage runs in a fresh agent. The tester writes tests before the code; the builder can't edit them.
+- **A second opinion.** A reviewer on a different model attacks every plan and every diff. Claude Code defaults: Opus 5.5 plans, Sonnet 5.5 builds, Opus 4.8 reviews.
+- **Evidence, not confidence.** Claims about the code carry `[read path:line]` or `[ran cmd]`; nothing ships on `[assumed]`. A QA finding blocks only with proof.
+- **Focused tests.** About 15 per feature, each naming the bug it catches.
+- **Readable plans.** Each feature keeps a human `walkthrough.md`, in simplified technical English, next to a machine `spec.md`.
+- **Bug memory.** Fixed bugs go to Bug Ledger after your yes, and every stage checks it before working in that area.
+
+## CLI
 
 ```bash
-ai-sdlc install --agent claude   # or cursor / windsurf / gemini / all
+ai-sdlc install [--agent NAME] [--target PATH] [--global] [--force] [--no-bugledger] [--no-hooks]
+ai-sdlc list                      # bundled skills, agents, and hooks
+ai-sdlc ste-check FILE...         # check a walkthrough against the writing rules
+ai-sdlc --version
 ```
 
-This copies the skills into your agent's skills directory. They then appear as slash commands: `/sdlc-init`, `/roadmap`, `/plan`, `/spec`, `/test`, `/build`, `/qa`, `/ship`, `/automate`, `/mentor`.
+## Requirements
 
-| Flag | Effect |
-|---|---|
-| `--agent all` | install for every supported agent at once |
-| `--target PATH` | install into a specific project directory (default: `.`) |
-| `--global` | install into your home directory instead of a project |
-| `--force` | overwrite existing skill folders |
+- Python 3.9+ or Node 18+ for the CLI, and git
+- [`uv`](https://docs.astral.sh/uv/getting-started/installation/) for Bug Ledger
+- `python3` on your PATH for the guard hooks
+- Optional: [codebase-memory-mcp](https://github.com/DeusData/codebase-memory-mcp) for faster caller search
+
+## Upgrading from 0.2.x
 
 ```bash
-ai-sdlc list         # see bundled skills
-ai-sdlc --version    # print the installed version
+ai-sdlc install --agent claude --force   # replaces /automate with /factory
 ```
 
-> **Monorepo, or no Python project at the root?** Not a problem — `ai-sdlc install` only copies skill files into `.claude/skills/` (or your agent's folder); it never reads `pyproject.toml` or anything else at the target. Install the CLI once with `pipx install ai-sdlc-kit` or `uv tool install ai-sdlc-kit`, then run it at your repo root — or from anywhere with `--target /path/to/root`.
+Then run `/sdlc-init` in each project — it upgrades `.sdlc/` in place.
 
-## Getting started
+## Links
 
-Every project starts with `/sdlc-init` — run it once, in your agent, inside your project folder. It writes:
+- [Changelog](https://github.com/xajeel/AI-SDLC/blob/main/CHANGELOG.md)
+- [License (MIT)](https://github.com/xajeel/AI-SDLC/blob/main/LICENSE)
 
-- `.sdlc/PROJECT.md` — project facts, real commands, **your git workflow** (it asks how you branch/commit; answer or take the default), and the **agent tier map** (which stages run on a strong vs mid model)
-- `.sdlc/CRAFT.md` — the code rulebook: pinned stack versions with modern-idiom rules, folder structure, style (including the always-on simplicity rules: minimal comments, no essay docstrings, boring beats clever), config and security rules
-- `.sdlc/STATE.md` — the feature tracker
-- `AGENTS.md` at the repo root — a short pointer so **any** coding tool (Claude Code, Cursor, Codex, Windsurf…) lands on the same rules before writing code
-
-It works two ways: give it a PRD (`/sdlc-init <path>`) for a new project, or run it bare on an existing codebase and it detects your stack from lockfiles and a handful of source files. Either way it shows you the rules for approval before writing anything.
-
-## The pipeline
-
-Every feature or bug lives in `.sdlc/specs/<name>/` as exactly two files:
-
-- **`walkthrough.md`** — for humans: the problem, the traced flow, the chosen solution, and every decision with its "why", in plain language.
-- **`spec.md`** — for machines: tasks, file whitelists, contracts, verify commands. No prose.
-
-The stages, each in its own fresh agent:
-
-1. **`/plan <ticket>`** — the conversation. It reads the real code and explains: what the ticket means, what actually happens (with `file:line` traces), why, and the production-grade ways to fix or build it — with pros/cons when options genuinely compete. You push back and refine; when you agree, it writes `walkthrough.md`. It never writes code.
-2. **`/spec <feature>`** — turns the agreed direction into ≤ 8 small, independently verifiable tasks.
-3. **`/test <feature>`** — a separate tester writes the test suite from the spec's contracts, before any implementation exists. For a bug, the first test *reproduces* it and fails — proof the cause was understood. The developer model never writes the tests that will judge its code.
-4. **`/build <feature>`** — implements task-by-task until the tester's tests flip red → green. It may never edit those tests; if one looks wrong it files a challenge and `/test` adjudicates against the spec.
-5. **`/qa <feature>`** — a fresh agent re-runs everything, checks for regressions, and scans the diff for PR-readiness: no debug leftovers, no dead code, no hardcoded config, code a mid-level dev can trace. Failures become fix-tasks `/build` executes.
-6. **`/ship <feature>`** — commits per your git workflow; `/ship <feature> --pr` pushes and opens a PR whose description (why / what changed / how to test) stands alone for any outside reviewer — human or another company's frontier model.
-
-Pick the path that matches what you're doing:
-
-| Situation | Commands |
-|---|---|
-| A bug ticket | `/plan <ticket>` → it traces and explains the bug, you agree on the fix → `/automate <name>` (or step through `/spec` → `/test` → `/build` → `/qa`) |
-| One feature | `/plan <feature>` → agree on the design → `/automate <name>` or the stages one by one |
-| A whole project from a PRD | `/sdlc-init <PRD>` → `/roadmap <PRD>` → run the pipeline per feature, in order |
-| "Just do it, don't ask me" | `/automate <ticket>` with no prior plan — it makes every call itself and logs each one `(auto)` |
-| Learning a codebase or a technology | `/mentor` — see [Learning a codebase](#learning-a-codebase) below |
-
-## Hands-free mode
-
-`/automate <x>` runs the whole pipeline back-to-back with **zero stops** except real blockers (a verify failing after 3 attempts, an unfixable regression). Its one branch point is at the start:
-
-- **You already planned** — a `walkthrough.md` you agreed in `/plan` exists → automate adopts *your* plan and continues from whatever stage is next. It never re-litigates an agreed decision.
-- **Nothing exists** — it plans itself, always taking the recommended production-standard option, and records every choice in the walkthrough marked `(auto)` so you can audit the whole run afterwards.
-
-Every stage still runs as its own fresh agent on its configured tier — automation never collapses the roles back into one context.
-
-Other controls:
-
-- **Skip a stage** — `/sdlc-init --skip-ship` (or `--skip-qa`, `--skip-test`) drops a stage from handoffs and `/automate`; toggle any time with `--unskip-<stage>`. Invoking a skipped skill directly still runs it.
-- **Bug memory** — `/qa` keeps `.sdlc/BUGS.md`, a plain-English log: what went wrong, why, how to avoid it. `/plan`, `/spec`, and `/build` read it on every run so the same bug never ships twice.
-- **Agent tiers** — the `Agents:` line in PROJECT.md maps each stage to `strong` or `mid`. Tiers, not vendor names: map them to whatever models your tool offers. Thinking stages (plan, spec, test, qa) default to strong; implementation runs on mid.
-
-## Learning a codebase
-
-The other skills build software; `/mentor` teaches it. Point it at a topic ("teach me Kafka") or at the repo you're sitting in ("teach me this codebase") and it builds a curriculum, then teaches **one lesson per session** — never dumping the whole course at once — quizzing you at the end of each and only advancing once you pass.
-
-For a codebase it reads the repo first, then runs a short course of one or two modules:
-
-- **Map & Run** — what the project does, a guided tour of the directories, getting it running locally, and one core flow traced end-to-end through the real files.
-- **Work On It** — the subsystems that change most often (picked from `git log`), the repo's conventions, and how a change actually ships here: branch, tests, CI, PR.
-
-Every lesson cites real `file:line` locations and the exercises happen inside the repo — run it, trace it, write a failing test. The final project is a real change with tests passing, so you finish able to contribute rather than just able to describe the code.
-
-State lives in `curriculum/<topic>/` (tracker, lessons, quizzes, projects), so progress survives across days and machines. Say `next` to continue, `quiz me` for a cumulative check, or `status` to see where you are.
-
-## Changelog
-
-- [x] `0.2.0` — pipeline redesign: new `/plan` (diagnose & teach a ticket in plain language, no code) and `/test` (independent tester writes the tests from the spec before build) skills; specs split into human `walkthrough.md` + machine `spec.md` under `.sdlc/specs/<feature>/`; every stage runs as its own fresh agent with configurable model tiers; `/automate` adopts an agreed plan and runs with zero stops; git-workflow rules and `AGENTS.md` stubs from `/sdlc-init`; `/ship --pr` opens a self-explanatory pull request
-- [x] `0.1.8` — PyPI and npm realigned on one version number, so `pip` and `npm` always ship the same kit
-- [x] `0.1.7` — new `/mentor` skill: a long-term, file-tracked teacher for any topic, with a codebase mode that onboards you to a repo well enough to contribute to it
-- [x] `0.1.6` — same kit on npm: `npm install -g ai-sdlc-kit` (zero-dependency Node CLI); releases now publish to PyPI and npm together
-- [x] `0.1.5` — `/automate` hands-free flow, stage skipping (`--skip-qa` / `--skip-ship`), plain-English bug log (`.sdlc/BUGS.md`) that feeds future specs, and specs now open with a mental-model section (what / why / how) presented in chat
-- [x] `0.1.4` — code-craft rulebook: `.sdlc/CRAFT.md` pins stack versions + modern idioms, enforces folder structure (one concern per file), env-based config with `.env.example`, and a security baseline across `/spec`, `/build`, `/qa`
-- [x] `0.1.3` — added a Getting started section: how to actually invoke the skills for a new project, an existing codebase, or a single feature
-- [x] `0.1.2` — automated PyPI releases via GitHub Actions trusted publishing
-- [x] `0.1.1` — cleaner README, professional package presentation
-- [x] `0.1.0` — initial release: 6 core skills + architecture-diagram, pip-installable CLI
-
----
-
-Related prior art: [github/spec-kit](https://github.com/github/spec-kit).
+The writing rules are an unofficial paraphrase in the style of ASD-STE100; this project is not affiliated with or endorsed by ASD. ASD-STE100 is a trademark of ASD.
