@@ -62,7 +62,7 @@ Write ONE minimal test for it, following the project's test pattern. Run it, add
 
 ## Hard rules
 
-- Touch ONLY test files. Never create or edit source files — not even scaffolding or fixtures that live outside the test layout.
+- Touch ONLY test files — plus this feature's spec.md (its `## Tests` section, and `(auto-amended)` lines under /factory) and `.sdlc/.stage`. Never create or edit source files — not even scaffolding or fixtures that live outside the test layout.
 - Never weaken a test to make it pass; never delete a red test because it is inconvenient.
 - Tests import the exact paths and names the spec declares. The spec doesn't name them → that's a spec gap: raise it, don't invent.
 - Keep the suite fast: no sleeps, no network unless the spec demands it (then mark that test clearly).

@@ -69,8 +69,8 @@ def push(command, cwd):
 @pytest.mark.parametrize(
     "agent, stage, path, code",
     [
-        ("ai-sdlc:sdlc-builder", "test totals", "tests/x.py", 2),
-        ("ai-sdlc:sdlc-tester", "build totals", "tests/x.py", 0),
+        ("sdlc-builder", "test totals", "tests/x.py", 2),
+        ("sdlc-tester", "build totals", "tests/x.py", 0),
         (None, "build totals", "tests/x.py", 2),
         (None, "test totals", "tests/x.py", 0),
         (None, "build totals", "src/app.py", 0),
@@ -99,6 +99,9 @@ def test_hooks_allow_invalid_json(hook):
         ("bash -c 'git push origin main'", 2),
         ("git push origin integration", 2),
         ("git push origin $(git branch --show-current) --force", 2),
+        ("git push --repo origin main", 2),
+        ("git push --repo=origin main", 2),
+        ("git push --repo origin feat/x", 0),
     ],
 )
 def test_guard_push_commands(tmp_path, command, code):

@@ -119,7 +119,7 @@ def current_branch(cwd):
 
 
 def check_push(args, cwd):
-    positionals, tags_only, skip = [], False, False
+    positionals, tags_only, skip, repo_given = [], False, False, False
     for k, arg in enumerate(args):
         if skip:
             skip = False
@@ -135,6 +135,8 @@ def check_push(args, cwd):
                 return "{} pushes every branch, protected ones included".format(arg)
             if name == "--tags":
                 tags_only = True
+            if name == "--repo":
+                repo_given = True
             if name in PUSH_OPTS_WITH_VALUE and "=" not in arg:
                 skip = True
             continue
@@ -146,7 +148,8 @@ def check_push(args, cwd):
             continue
         positionals.append(arg)
 
-    refspecs = positionals[1:]
+    # --repo names the remote, so every positional is a refspec.
+    refspecs = positionals if repo_given else positionals[1:]
     for spec in refspecs:
         if spec.startswith("+"):
             return "refspec {} forces".format(spec)

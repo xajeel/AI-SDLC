@@ -12,7 +12,10 @@ Verifies a feature against its spec AND against what the spec missed. Runs on th
 
 **1. Load** `.sdlc/PROJECT.md` + `.sdlc/CRAFT.md` + `.sdlc/specs/<feature>/spec.md` + `walkthrough.md`. (Legacy layout: a single `.sdlc/specs/<feature>.md` → treat it as spec.md.) Spec name unclear → list `.sdlc/specs/` and ask.
 
-**2. Collect the diff:** `git diff <base>...HEAD` plus `git status --short` for uncommitted and untracked files (base = the merge target in PROJECT.md's Git workflow). List the changed symbols: functions, routes, schemas, components.
+**2. Collect the diff — committed AND uncommitted.** /build does not commit, so a commit range alone shows nothing. Base = the merge target in PROJECT.md's Git workflow.
+- `git diff <base>` — every change to tracked files since the base: commits, staged, and unstaged.
+- `git ls-files --others --exclude-standard` — new untracked files; include each in full with `git diff --no-index /dev/null <file>`.
+Checks B, C, and D get this full patch (or these two commands) — never only file names. List the changed symbols: functions, routes, schemas, components.
 
 **3. Start checks B, C, D as parallel background subagents, then run check A yourself.** Each subagent gets only the files named below and returns findings, never file dumps.
 
